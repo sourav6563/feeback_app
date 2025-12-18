@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 import User from "@/model/user";
 import { SignUpSchema } from "@/schemas/signupSchema";
-import { success } from "zod";
 
 export const POST = async (request: Request) => {
   await dbConnect();
@@ -45,6 +44,12 @@ export const POST = async (request: Request) => {
           { success: false, message: "Email is already exists" },
           { status: 400 }
         );
+      } else {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        ExistingUserByEmail.password = hashedPassword;
+        ExistingUserByEmail.verifyCode = verifyCode;
+        ExistingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
+        await ExistingUserByEmail.save();
       }
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
