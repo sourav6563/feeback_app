@@ -1,12 +1,9 @@
 export const createResponse = (
   success: boolean,
   message: string,
-  status: number = 200,
+  status: number,
   data?: any,
   errors?: any
 ) => {
-  return Response.json(
-    { success, message, data, errors },
-    { status }
-  );
+  return Response.json({ success, message, data, errors }, { status });
 };

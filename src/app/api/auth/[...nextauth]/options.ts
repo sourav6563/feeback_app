@@ -37,13 +37,14 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Incorrect password");
           }
         } catch (err: any) {
-          throw new Error(err);
+          throw new Error(err.message || "An error occurred during authorization");
         }
       },
     }),
   ],
   callbacks: {
     async session({ session, token }) {
+      // token._id is already a string here (converted in jwt callback)
       session.user._id = token._id;
       session.user.isVerified = token.isVerified;
       session.user.isAcceptingMessages = token.isAcceptingMessages;
