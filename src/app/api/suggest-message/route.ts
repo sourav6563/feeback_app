@@ -1,19 +1,36 @@
-import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
+import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+// 1. IMPORTANT: This forces Next.js to fetch new data every single time
+export const dynamic = "force-dynamic";
+
+export async function POST() {
   try {
-    // const { messages }: { messages: UIMessage[] } = await req.json();
-    const prompt =
-      "Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. For example, your output should be structured like this: 'What’s a hobby you’ve recently started?||If you could have dinner with any historical figure, who would it be?||What’s a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment.";
+    // 2. Use the Vercel AI SDK 'generateText' function
+    const { text } = await generateText({
+      // Configure the Google provider with your specific API key and model
+      model: google("gemini-2.5-flash"),
 
-    const result = streamText({
-      model: "google/gemini-2.5-pro",
-      messages: convertToModelMessages(messages),
+      // Map your original system instruction here
+      system:
+        "You are a helpful assistant for an anonymous social messaging platform. Your output must ALWAYS be a single string of 3 questions separated strictly by '||'. Avoid sensitive topics.",
+
+      // Map your original prompt here
+      prompt:
+        "Generate 3 unique, random, and intriguing questions for a diverse audience. Do not repeat common questions.",
+
+      // Map your original generation config here
+      temperature: 1.3,
     });
 
-    return result.toUIMessageStreamResponse();
+    // The SDK returns the string directly in the 'text' property
+    return NextResponse.json({ data: text });
   } catch (error) {
-    console.error(`an unexpected error occurred`, error);
-    throw error;
+    console.error("AI Generation Error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch suggestions" },
+      { status: 500 }
+    );
   }
 }
