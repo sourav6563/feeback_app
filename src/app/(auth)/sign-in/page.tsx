@@ -52,7 +52,38 @@ function Page() {
     checkUsername();
   }, [debounceUsername]);
 
-  return <div>page</div>;
+  const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
+    setSubmitting(true);
+    try {
+      const response = await axios.post<ApiResponse>("/api/signup", data);
+      console.log(response);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        router.replace(`/verify/${username}`);
+      }
+    } catch (error) {
+      console.error(`error in Signup User ${error}`);
+      const axiosError = error as AxiosError<ApiResponse>;
+      const errrorMessage = axiosError.response?.data.message;
+      toast.error("SignUp failed", {
+        description: errrorMessage,
+      });
+      setSubmitting(false); // Set isSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+            Join Mystry Message
+          </h1>
+          <p className="mb-4">Signup To Start Your anonymous adventure</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Page;
