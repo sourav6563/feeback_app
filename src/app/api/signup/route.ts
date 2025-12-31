@@ -23,11 +23,15 @@ export const POST = async (request: Request) => {
 
     const { username, email, password } = result.data;
 
-    const ExistingUserVerifiedByUsername = await User.findOne({
+    const existingUserByUsername = await User.findOne({
       username,
-      isVerified: true,
     });
-    if (ExistingUserVerifiedByUsername) {
+
+    if (
+      existingUserByUsername &&
+      (existingUserByUsername.isVerified ||
+        existingUserByUsername.email !== email)
+    ) {
       return Response.json(
         { success: false, message: "Username is already exists" },
         { status: 400 }
@@ -46,6 +50,7 @@ export const POST = async (request: Request) => {
         );
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
+        ExistingUserByEmail.username = username;
         ExistingUserByEmail.password = hashedPassword;
         ExistingUserByEmail.verifyCode = verifyCode;
         ExistingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);

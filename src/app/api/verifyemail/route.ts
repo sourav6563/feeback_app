@@ -19,7 +19,7 @@ export const POST = async (request: Request) => {
         result.error.format()
       );
     }
-    const { username, code } = result.data;
+    const { code, username } = result.data;
     const decodedUsername = decodeURIComponent(username);
     const user = await User.findOne({ username: decodedUsername });
     if (!user) {
