@@ -27,12 +27,12 @@ export interface user extends Document {
   messages: Message[];
 }
 const userSchema: Schema<user> = new Schema({
-  username: {
-    type: String,
-    required: [true, "Username is required"],
-    unique: true,
-    trim: true,
-  },
+  // username: {
+  //   type: String,
+  //   required: [true, "Username is required"],
+  //   unique: true,
+  //   trim: true,
+  // },
   email: {
     type: String,
     required: [true, "Email is required"],

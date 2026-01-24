@@ -24,7 +24,7 @@ export const POST = async (request: Request) => {
     const { username, email, password } = result.data;
 
     const existingUserByUsername = await User.findOne({
-      username,
+      username
     });
 
     if (

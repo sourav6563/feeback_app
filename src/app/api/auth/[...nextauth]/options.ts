@@ -6,7 +6,6 @@ import { NextAuthOptions } from "next-auth";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      id: "domain-login",
       name: "Domain Account",
       credentials: {
         email: { label: "Email", type: "text", placeholder: "Email" },
@@ -37,7 +36,9 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Incorrect password");
           }
         } catch (err: any) {
-          throw new Error(err.message || "An error occurred during authorization");
+          throw new Error(
+            err.message || "An error occurred during authorization"
+          );
         }
       },
     }),
@@ -62,7 +63,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/sign-in",
+    signIn: "/signin",
   },
   session: {
     strategy: "jwt",
